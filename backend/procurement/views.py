@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from inventory.models import InventoryItem
 from django.db.models import Sum
 from .permissions import IsAdminOrProcurementManager
+from analytics_ai.ai_logic import get_vendor_recommendations
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PurchaseRequestListCreateView(APIView):
@@ -172,8 +173,36 @@ class DashboardView(APIView):
         })
     
 # ... (Existing code)
-class PurchaseRequestAISuggestView(APIView):  # New: Placeholder for AI vendor suggestion
+# In backend/procurement/views.py (add import at top)
+
+# Replace the old PurchaseRequestAISuggestView with this:
+class PurchaseRequestAISuggestView(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request, pk):
-        # Future: Call AI to suggest vendors based on PR items/department
-        return Response({"message": "AI suggestions coming soon", "ai_suggested_vendors": []})
+
+    def post(self, request):
+        department = request.data.get('department')
+        item_id = request.data.get('item')
+        quantity = request.data.get('quantity')
+        estimated_price = request.data.get('estimated_price')
+
+        if not all([department, item_id, quantity, estimated_price]):
+            return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get category from the selected item
+        try:
+            item = InventoryItem.objects.get(id=item_id)
+            category_id = item.category.id if item.category else None
+        except InventoryItem.DoesNotExist:
+            category_id = None
+
+        # Call our clean AI function
+        recommendations = get_vendor_recommendations(
+            categories=[category_id] if category_id else None,
+            budget=float(estimated_price) * int(quantity),
+            top_n=5
+        )
+
+        return Response({
+            "message": "AI suggestions ready",
+            "suggestions": recommendations
+        })

@@ -1,5 +1,5 @@
 # backend/vendors/models.py (Added AI fields)
-from django.db import models
+from django.db import models 
 
 class Vendor(models.Model):
     name = models.CharField(max_length=255)
@@ -22,33 +22,41 @@ class Vendor(models.Model):
     ai_explanation = models.TextField(blank=True)  # AI-generated text for performance/risk
     categories = models.ManyToManyField('inventory.InventoryCategory', blank=True)  # For AI suggestions matching
 
+    # backend/vendors/models.py
     def update_metrics_from_history(self):
         deliveries = self.deliveries.all()
-
+        
         total = deliveries.count()
+
         if total == 0:
             self.total_orders = 0
             self.on_time_deliveries = 0
             self.avg_delivery_days = 0
             self.avg_rating = 0
             self.reliability_score = 50
+            self.ai_risk_score = 50.0
+            self.ai_explanation = "No delivery history available."
             self.save()
             return
 
         self.total_orders = total
         self.on_time_deliveries = deliveries.filter(was_on_time=True).count()
-
-        self.avg_delivery_days = round(sum(d.delivery_days for d in deliveries) / total,2)
-        self.avg_rating = round(sum(d.rating for d in deliveries) / total,2)
+        self.avg_delivery_days = round(sum(d.delivery_days for d in deliveries) / total, 2)
+        self.avg_rating = round(sum(d.rating for d in deliveries) / total, 2)
 
         self.calculate_reliability_score()
+
+        # 🔥 FIXED: Lazy import to break circular import
+        from analytics_ai.ai_logic import calculate_ai_risk
+        self.ai_risk_score, self.ai_explanation = calculate_ai_risk(self)
+
         self.save(update_fields=[
-            "total_orders",
-            "on_time_deliveries",
-            "avg_delivery_days",
-            "avg_rating",
-            "reliability_score",
+            "total_orders", "on_time_deliveries", "avg_delivery_days",
+            "avg_rating", "reliability_score", "ai_risk_score", "ai_explanation"
         ])
+
+    # You can keep your old calculate_reliability_score() and generate_ai_explanation()
+    # We are no longer calling generate_ai_explanation() — it's now AI-powered above.
 
     def calculate_reliability_score(self):
         """Simple weighted AI scoring (rule-based + historical data)"""

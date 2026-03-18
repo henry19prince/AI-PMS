@@ -30,4 +30,6 @@ urlpatterns = [
     path('api/procurement/', include('procurement.urls')),  # Prefix to avoid conflict
     path('api/inventory/', include('inventory.urls')),
     path('api/user/', UserDetailView.as_view()),
+    path('api/reports/', include('reports.urls')),
+    path('api/contracts/', include('contracts.urls')),  # New line for contracts app
 ]

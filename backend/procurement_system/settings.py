@@ -44,7 +44,10 @@ INSTALLED_APPS = [
     'vendors',
     'procurement',
     'inventory',
-
+    'analytics_ai',
+    'reports',
+    'contracts',
+    
     # Third-party
     'rest_framework',
     'corsheaders',

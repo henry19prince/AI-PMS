@@ -16,7 +16,8 @@ class DeliveryHistorySerializer(serializers.ModelSerializer):
 class VendorSerializer(serializers.ModelSerializer):
     # deliveries = DeliveryHistorySerializer(many=True, read_only=True)
     monthly_delivery_stats = serializers.SerializerMethodField()
-    ai_explanation = serializers.SerializerMethodField()
+        # Return the actual stored AI explanation (SHAP version)
+    ai_explanation = serializers.ReadOnlyField()
 
     class Meta:
         model = Vendor
@@ -48,5 +49,5 @@ class VendorSerializer(serializers.ModelSerializer):
             for item in qs
         ]
     
-    def get_ai_explanation(self, obj):
-        return obj.generate_ai_explanation()
+    #def get_ai_explanation(self, obj):
+        #return obj.generate_ai_explanation()

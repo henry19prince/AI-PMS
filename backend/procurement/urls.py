@@ -21,5 +21,5 @@ urlpatterns = [
     path('po/<int:pk>/status/', PurchaseOrderStatusUpdateView.as_view()),
     path("dashboard/", DashboardView.as_view()),
     path('decline/<int:pk>/', PurchaseRequestDeclineView.as_view()),
-    path('ai-suggest/<int:pk>/', PurchaseRequestAISuggestView.as_view()),  # New: Placeholder for AI vendor suggestion
+    path('ai-suggest/', PurchaseRequestAISuggestView.as_view()),  # New: Placeholder for AI vendor suggestion
 ]
