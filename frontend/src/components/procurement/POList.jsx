@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Box, Card, CardContent, Chip, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import axios from "../../api/axios";
+import DownloadReportButton from "../common/DownloadReportButton";
 
 const POList = () => {
   const [pos, setPOs] = useState([]);
@@ -15,6 +16,7 @@ const POList = () => {
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" gutterBottom>Purchase Orders</Typography>
+      <DownloadReportButton title="Purchase Order Report" />
       {pos.length === 0 ? (
         <Card><CardContent><Typography color="text.secondary">No Purchase Orders found.</Typography></CardContent></Card>
       ) : (

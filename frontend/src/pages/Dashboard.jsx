@@ -6,7 +6,7 @@ import TopVendorsChart from "../components/charts/TopVendorsChart";
 import KpiCards from "../components/dashboard/KpiCards";
 import OnTimeDeliverySplitChart from "../components/charts/OnTimeDeliverySplitChart";
 import axios from "../api/axios";
-
+import DownloadReportButton from "../components/common/DownloadReportButton";
 
 
 
@@ -27,6 +27,8 @@ const Dashboard = () => {
       <Typography variant="h4" gutterBottom>
         Dashboard
       </Typography>
+
+      <DownloadReportButton title="Dashboard Report" />   {/* ← ADD THIS */}
       <KpiCards vendors={vendors} />
       <Grid container spacing={3}>
         <Grid item xs={12}  md={6}>

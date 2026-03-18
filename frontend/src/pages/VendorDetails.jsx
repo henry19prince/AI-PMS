@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Typography, Card, CardContent, Grid } from "@mui/material";
+import { Typography, Card, CardContent, Grid, Box, Chip} from "@mui/material";
 import {
   FormControl,
   InputLabel,
@@ -13,6 +13,7 @@ import DeliveryPerformanceChart from "../components/vendor/DeliveryPerformanceCh
 import VendorMonthlyDeliveryChart from "../components/charts/VendorMonthlyDeliveryChart";
 import VendorRadarChart from "../components/charts/VendorRadarChart";
 import { buildVendorRadarMetrics } from "../components/utils/vendorRadarMetrics";
+import DownloadReportButton from "../components/common/DownloadReportButton";
 
 const VendorDetails = () => {
   const { id } = useParams();
@@ -30,8 +31,16 @@ const VendorDetails = () => {
   }, [id]);
 
   const loadVendor = async () => {
-    const res = await axios.get(`/vendors/${id}/`);
-    setVendor(res.data);
+      try {
+          // Force fresh data (cache buster)
+        const res = await axios.get(`/vendors/${id}/?t=${Date.now()}`);
+          
+          console.log("🔍 API Response from Backend:", res.data);   // ←←← DEBUG LINE
+          
+          setVendor(res.data);
+      } catch (err) {
+          console.error("Failed to load vendor", err);
+      }
   };
 
   useEffect(() => {
@@ -54,6 +63,8 @@ const VendorDetails = () => {
       <Typography variant="h4" gutterBottom>
         {vendor.name}
       </Typography>
+
+      <DownloadReportButton title={vendor.name} />   {/* ← ADD THIS */}
 
       <Grid container spacing={3}>
         <Grid item xs={6}>
@@ -129,29 +140,55 @@ const VendorDetails = () => {
             </CardContent>
           </Card>
         </Grid>
+       {/* AI Risk Explanation - Pretty Version */}
         <Grid item xs={12}>
           <Card sx={{ mt: 2, bgcolor: "background.paper" }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                AI Performance Insight
+              <Typography variant="h6" gutterBottom color="error.main" sx={{ fontWeight: "bold" }}>
+                Risk Explanation
               </Typography>
 
-              {Array.isArray(vendor.ai_explanation) ? (
-                vendor.ai_explanation.map((text, i) => (
-                  <Typography
-                    key={i}
-                    variant="body2"
-                    sx={{
-                      mb: 1,
-                      display: "flex",
-                      alignItems: "center"
-                    }}
-                  >
-                    • {text}
-                  </Typography>
-                ))
+              {/* Big Risk Score */}
+              <Typography variant="h3" sx={{ mb: 2, fontWeight: "bold", color: "#d32f2f" }}>
+                {vendor.ai_risk_score || 0}
+                <span style={{ fontSize: "0.55em", color: "#666", marginLeft: "4px" }}>/100</span>
+              </Typography>
+
+              {/* Risk Level Badge */}
+              <Box sx={{ mb: 3 }}>
+                {vendor.ai_risk_score >= 75 ? (
+                  <Chip label="HIGH RISK" color="error" sx={{ fontWeight: "bold", fontSize: "0.9rem" }} />
+                ) : vendor.ai_risk_score >= 50 ? (
+                  <Chip label="MEDIUM RISK" color="warning" sx={{ fontWeight: "bold", fontSize: "0.9rem" }} />
+                ) : (
+                  <Chip label="LOW RISK" color="success" sx={{ fontWeight: "bold", fontSize: "0.9rem" }} />
+                )}
+              </Box>
+
+              {/* SHAP AI Explanation - Clean Bullets */}
+              <Typography variant="subtitle2" sx={{ mb: 1, color: "#666", fontWeight: "bold" }}>
+                AI Analysis:
+              </Typography>
+
+              {vendor.ai_explanation && vendor.ai_explanation.includes("SHAP AI Analysis:") ? (
+                <Box sx={{ pl: 2 }}>
+                  {vendor.ai_explanation
+                    .replace("**SHAP AI Analysis:** ", "")
+                    .split(" • ")
+                    .map((point, i) => (
+                      <Typography
+                        key={i}
+                        variant="body2"
+                        sx={{ mb: 1, display: "flex", alignItems: "flex-start" }}
+                      >
+                        • {point.trim()}
+                      </Typography>
+                    ))}
+                </Box>
               ) : (
-                <Typography variant="body2">{vendor.ai_explanation}</Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {vendor.ai_explanation || "No risk explanation available yet."}
+                </Typography>
               )}
             </CardContent>
           </Card>

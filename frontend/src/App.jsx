@@ -13,6 +13,9 @@ import POList from "./components/procurement/POList";
 import PRPage from "./pages/PRPage";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProviderWrapper } from "./context/ThemeContext";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import ContractUpload from "./pages/ContractUpload";
+import ContractSummary from "./pages/ContractSummary";
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
           <Route path="/procurement/dashboard" element={<ProtectedRoute><Layout><ProcurementDashboard /></Layout></ProtectedRoute>} />
           <Route path="/procurement/pr" element={<ProtectedRoute><Layout><PRPage /></Layout></ProtectedRoute>} />
           <Route path="/procurement/po" element={<ProtectedRoute><Layout><POList /></Layout></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute><Layout><AnalyticsDashboard /></Layout></ProtectedRoute>} />
+          <Route path="/contracts/upload" element={<ContractUpload />} />
+          <Route path="/contracts/:id" element={<ContractSummary />} />
         </Routes>
       </AuthProvider>
     </ThemeProviderWrapper>

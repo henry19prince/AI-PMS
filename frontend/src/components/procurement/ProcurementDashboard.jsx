@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import axios from "../../api/axios";  // Use your axios
+import DownloadReportButton from "../common/DownloadReportButton";
 
 const ProcurementDashboard = () => {
   const [data, setData] = useState(null);
@@ -23,6 +24,8 @@ const ProcurementDashboard = () => {
   return (
     <>
       <Typography variant="h4" gutterBottom>Procurement Dashboard</Typography>
+
+      <DownloadReportButton title="Procurement Report" />   {/* ← ADD THIS */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={4}><StatCard title="Total PRs" value={data.total_pr} color="primary" /></Grid>
         <Grid item xs={12} sm={6} md={4}><StatCard title="Pending PRs" value={data.pending_pr} color="warning" /></Grid>
