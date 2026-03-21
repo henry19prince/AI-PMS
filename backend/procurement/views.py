@@ -13,6 +13,7 @@ from inventory.models import InventoryItem
 from django.db.models import Sum
 from .permissions import IsAdminOrProcurementManager
 from analytics_ai.ai_logic import get_vendor_recommendations
+from django.utils import timezone
 
 @method_decorator(csrf_exempt, name='dispatch')
 class PurchaseRequestListCreateView(APIView):
@@ -125,50 +126,52 @@ class PurchaseOrderDetailView(APIView):
 
 class PurchaseOrderStatusUpdateView(APIView):
     permission_classes = [IsAuthenticated]
+
     def patch(self, request, pk):
         try:
             po = PurchaseOrder.objects.get(pk=pk)
         except PurchaseOrder.DoesNotExist:
-            return Response(
-                {"error": "Purchase Order not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Purchase Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
         new_status = request.data.get("status")
-        if new_status not in ["SENT", "DELIVERED"]:
-            return Response(
-                {"error": "Invalid status"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        # ✅ Only update inventory when delivered
-        if new_status == "DELIVERED" and po.status != "DELIVERED":
-            pr = po.purchase_request
-            for pr_item in pr.items.all():
-                inventory_item = pr_item.item
-                inventory_item.current_stock += pr_item.quantity
-                inventory_item.save()
+
+        if new_status not in ["CREATED", "PURCHASED", "CANCELLED"]:
+            return Response({"error": "Invalid status. Allowed: CREATED, PURCHASED, CANCELLED"}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+
         po.status = new_status
-        po.save()
-        return Response(
-            {"message": f"PO status updated to {new_status}"}
-        )
+        po.status_updated_at = timezone.now()
+        po.save(update_fields=['status', 'status_updated_at'])
+
+        return Response({
+            "message": f"PO #{po.id} status updated to {new_status}",
+            "po_id": po.id,
+            "new_status": new_status
+        })
 
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         total_pr = PurchaseRequest.objects.count()
         pending_pr = PurchaseRequest.objects.filter(status="PENDING").count()
         approved_pr = PurchaseRequest.objects.filter(status="APPROVED").count()
+        
         total_po = PurchaseOrder.objects.count()
-        delivered_po = PurchaseOrder.objects.filter(status="DELIVERED").count()
+        purchased_po = PurchaseOrder.objects.filter(status="PURCHASED").count()   # ← Updated
+        cancelled_po = PurchaseOrder.objects.filter(status="CANCELLED").count()   # ← Updated
+        
         total_value = PurchaseOrder.objects.aggregate(
             total=Sum("final_cost")
         )["total"] or 0
+
         return Response({
             "total_pr": total_pr,
             "pending_pr": pending_pr,
             "approved_pr": approved_pr,
             "total_po": total_po,
-            "delivered_po": delivered_po,
+            "purchased_po": purchased_po,      # ← New key
+            "cancelled_po": cancelled_po,      # ← New key
             "total_value": total_value,
         })
     

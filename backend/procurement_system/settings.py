@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'inventory',
     'analytics_ai',
     'reports',
-    'contracts',
+    'contracts',  # New line for contracts app
     
     # Third-party
     'rest_framework',

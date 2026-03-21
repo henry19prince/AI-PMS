@@ -3,17 +3,21 @@ import DownloadIcon from "@mui/icons-material/Download";
 
 const DownloadReportButton = ({ title = "Report" }) => {
   const handleDownload = () => {
-    // Temporary title for PDF
-    const originalTitle = document.title;
-    document.title = `${title} - AI Procurement Management System`;
+    // Temporary hide sidebar/navbar
+    const sidebar = document.querySelector('.MuiDrawer-root');
+    const navbar = document.querySelector('.MuiAppBar-root');
+    if (sidebar) sidebar.style.display = 'none';
+    if (navbar) navbar.style.display = 'none';
 
-    // Trigger print
+    document.title = `${title} - AI Procurement Management`;
     window.print();
 
-    // Restore original title after printing
+    // Restore (optional, but good practice)
     setTimeout(() => {
-      document.title = originalTitle;
-    }, 500);
+      if (sidebar) sidebar.style.display = '';
+      if (navbar) navbar.style.display = '';
+      document.title = "AI Procurement Management";
+    }, 1000);
   };
 
   return (

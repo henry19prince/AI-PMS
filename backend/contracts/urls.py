@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import ContractUploadView, ContractSummaryView
+from . import views
 
 urlpatterns = [
-    path('upload/', ContractUploadView.as_view()),
-    path('<int:pk>/summary/', ContractSummaryView.as_view()),
+    path('upload/', views.upload_contract, name='upload_contract'),
 ]

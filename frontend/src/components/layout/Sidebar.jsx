@@ -13,6 +13,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { useNavigate } from "react-router-dom";
 import BarChartIcon from "@mui/icons-material/BarChart";   // ← ADD THIS
+import DescriptionIcon from "@mui/icons-material/Description";
+
 
 const drawerWidth = 240;
 
@@ -55,6 +57,10 @@ const Sidebar = () => {
         <ListItemButton onClick={() => navigate("/procurement/po")}>
           <ListItemIcon><ReceiptIcon /></ListItemIcon>
           <ListItemText primary="Purchase Orders" />
+        </ListItemButton>
+        <ListItemButton onClick={() => navigate("/contracts")}>
+          <ListItemIcon><DescriptionIcon /></ListItemIcon>
+          <ListItemText primary="Contract AI Summarizer" />
         </ListItemButton>
       </List>
     </Drawer>

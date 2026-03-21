@@ -3,6 +3,8 @@ from django.db import models
 from django.conf import settings
 from inventory.models import InventoryItem
 from vendors.models import Vendor
+from django.utils import timezone
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -70,13 +72,27 @@ class PurchaseOrder(models.Model):
         related_name="purchase_order"
     )
     supplier = models.ForeignKey(
-        Vendor,  # Changed to Vendor
+        Vendor,
         on_delete=models.PROTECT,
         null=True,
         blank=True
     )
     final_cost = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # UPDATED: Only these 3 statuses as per your requirement
+    STATUS_CHOICES = [
+        ('CREATED', 'Created'),
+        ('PURCHASED', 'Purchased'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+
     status = models.CharField(
         max_length=20,
+        choices=STATUS_CHOICES,
         default="CREATED"
     )
+
+    status_updated_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"PO-{self.id} ({self.status})"

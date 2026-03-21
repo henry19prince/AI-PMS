@@ -12,169 +12,71 @@
 
 /* ==================== PRINT STYLES (Improved) ==================== */
 @media print {
-  /* Hide Navbar completely */
-  .MuiAppBar-root,
-  nav,
-  header,
-  .MuiToolbar-root {
+  /* Hide EVERYTHING outside main content */
+  body > *:not(main):not(.MuiBox-root):not(.MuiContainer-root):not(.MuiGrid-container) {
     display: none !important;
+    visibility: hidden !important;
   }
 
-  /* Hide Sidebar completely */
+  /* Force hide navbar & sidebar (very aggressive) */
+  .MuiAppBar-root,
   .MuiDrawer-root,
   .MuiDrawer-paper,
+  nav,
+  header,
   aside,
-  [class*="Sidebar"] {
+  [class*="Sidebar"],
+  [class*="AppBar"],
+  .MuiToolbar-root,
+  .MuiPaper-root[role="navigation"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Hide all buttons and interactive elements except content */
+  button,
+  .MuiButton-root,
+  .MuiIconButton-root,
+  .MuiChip-root {
     display: none !important;
   }
 
-  /* Hide all buttons except the download button (if any) */
-  button:not(.print-only),
-  .MuiButton-root {
-    display: none !important;
-  }
-
-  /* Make main content full width and clean */
-  .MuiBox-root,
+  /* Make main content full-page and clean */
   main,
-  .MuiContainer-root {
+  .MuiBox-root,
+  .MuiContainer-root,
+  .MuiGrid-container {
     margin: 0 !important;
-    padding: 30px !important;
+    padding: 40px 30px !important;
+    width: 100% !important;
     max-width: 100% !important;
+    box-shadow: none !important;
   }
 
-  /* Charts look better in print */
+  /* Better chart sizing for print */
   .recharts-wrapper {
     width: 100% !important;
     height: 420px !important;
   }
 
-  /* Nice heading for PDF */
+  /* Improve headings and text */
   h4 {
     font-size: 28px !important;
     margin-bottom: 25px !important;
-    border-bottom: 3px solid #1976d2;
-    padding-bottom: 15px;
+    border-bottom: 3px solid #1976d2 !important;
+    padding-bottom: 15px !important;
   }
 
-  /* Risk score looks professional */
-  .MuiTypography-h3 {
-    font-size: 48px !important;
-    font-weight: bold !important;
-  }
-
-  /* Clean bullets in explanation */
   .MuiTypography-body2 {
     font-size: 15px !important;
     margin-bottom: 10px !important;
   }
 
-  /* Remove any extra margins/padding */
+  /* Remove extra margins */
   * {
     margin: 0 !important;
     padding: 0 !important;
-  }
-}
-/* ==================== STRONG PRINT STYLES - HIDE NAVBAR & SIDEBAR ==================== */
-@media print {
-  /* Force hide Navbar */
-  .MuiAppBar-root,
-  nav,
-  header,
-  .MuiToolbar-root {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
-  /* Force hide Sidebar */
-  .MuiDrawer-root,
-  .MuiDrawer-paper,
-  aside,
-  [class*="Sidebar"],
-  .MuiDrawer-permanent {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-  }
-
-  /* Hide all buttons except download */
-  button,
-  .MuiButton-root,
-  .MuiIconButton-root {
-    display: none !important;
-  }
-
-  /* Make main content clean and full width */
-  main,
-  .MuiBox-root,
-  .MuiContainer-root,
-  .MuiGrid-container {
-    margin: 0 !important;
-    padding: 40px 30px !important;
-    max-width: 100% !important;
-  }
-
-  /* Charts look good in print */
-  .recharts-wrapper {
-    width: 100% !important;
-    height: 420px !important;
-  }
-
-  /* Nice PDF heading */
-  h4 {
-    font-size: 28px !important;
-    border-bottom: 3px solid #1976d2 !important;
-    padding-bottom: 15px !important;
-  }
-}/* ==================== STRONG PRINT STYLES - HIDE NAVBAR & SIDEBAR ==================== */
-@media print {
-  /* Force hide Navbar */
-  .MuiAppBar-root,
-  nav,
-  header,
-  .MuiToolbar-root {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
-  /* Force hide Sidebar */
-  .MuiDrawer-root,
-  .MuiDrawer-paper,
-  aside,
-  [class*="Sidebar"],
-  .MuiDrawer-permanent {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-  }
-
-  /* Hide all buttons except download */
-  button,
-  .MuiButton-root,
-  .MuiIconButton-root {
-    display: none !important;
-  }
-
-  /* Make main content clean and full width */
-  main,
-  .MuiBox-root,
-  .MuiContainer-root,
-  .MuiGrid-container {
-    margin: 0 !important;
-    padding: 40px 30px !important;
-    max-width: 100% !important;
-  }
-
-  /* Charts look good in print */
-  .recharts-wrapper {
-    width: 100% !important;
-    height: 420px !important;
-  }
-
-  /* Nice PDF heading */
-  h4 {
-    font-size: 28px !important;
-    border-bottom: 3px solid #1976d2 !important;
-    padding-bottom: 15px !important;
   }
 }
